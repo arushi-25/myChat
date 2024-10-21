@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:mychat/services/Database_service.dart';
 import 'package:mychat/services/alert_service.dart';
 import 'package:mychat/services/auth_service.dart';
 import 'package:mychat/services/media_service.dart';
@@ -21,5 +22,8 @@ Future<void> registerServices() async{
   );
   getIt.registerSingleton<StorageService>(
     StorageService(),
+  );
+  getIt.registerSingleton<DatabaseService>(
+    DatabaseService(),
   );
 }

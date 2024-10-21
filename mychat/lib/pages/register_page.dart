@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mychat/consts.dart';
+import 'package:mychat/models/user_profile.dart';
+import 'package:mychat/services/Database_service.dart';
+import 'package:mychat/services/alert_service.dart';
 import 'package:mychat/services/auth_service.dart';
 import 'package:mychat/services/media_service.dart';
 import 'package:mychat/services/navigation_service.dart';
@@ -23,6 +26,8 @@ class _RegisterPageState extends State<RegisterPage> {
   late MediaService _mediaService;
   late NavigationService _navigationService;
   late StorageService _storageService;
+  late AlertService _alertService;
+  late DatabaseService _databaseService;
 
   String? email,password,name;
 
@@ -36,6 +41,8 @@ class _RegisterPageState extends State<RegisterPage> {
     _navigationService = _getIt.get<NavigationService>();
     _authService = _getIt.get<AuthService>();
     _storageService = _getIt.get<StorageService>();
+    _alertService = _getIt.get<AlertService>();
+    _databaseService = _getIt.get<DatabaseService>();
   }
   @override
   Widget build(BuildContext context) {
@@ -181,9 +188,32 @@ class _RegisterPageState extends State<RegisterPage> {
                     file: selectedImage!,
                     uid: _authService.user!.uid,
                 );
-              }   
+                if(pfpURL != null){
+                  await _databaseService.createUserProfile(
+                    userProfile: UserProfile(
+                      uid: _authService.user!.uid, 
+                      name: name, 
+                      pfpURL: pfpURL
+                    )
+                  );
+                  _alertService.showToast(
+                    text: "User Registered Successfully",
+                    icon: Icons.check,
+                  );
+                  _navigationService.goBack();
+                  _navigationService.pushReplacementNamed("/Home");
+                }else{
+                  throw Exception("Unable to upload user profile picture");
+                }
+              } else{
+                throw Exception("Unable to register user");
+              }  
           } catch (e) {
             print(e);
+            _alertService.showToast(
+              text:"Failed to register, Please try again!",
+              icon: Icons.error,
+            );
           }
           setState(() {
             isLoading = false;
