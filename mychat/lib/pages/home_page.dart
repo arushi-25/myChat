@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mychat/models/user_profile.dart';
+import 'package:mychat/pages/chat_page.dart';
 import 'package:mychat/services/Database_service.dart';
 import 'package:mychat/services/alert_service.dart';
 import 'package:mychat/services/auth_service.dart';
@@ -93,7 +94,23 @@ class _HomePageState extends State<HomePage> {
                 ),
                 child: ChatTile(
                   userProfile: user,
-                  onTap: (){}),
+                  onTap: () async{
+                    final chatExists = await _databaseService.checkChatExists(
+                      _authService.user!.uid,
+                      user.uid!,
+                    );
+                    if(!chatExists){
+                       await _databaseService.createNewChat(
+                        _authService.user!.uid,
+                        user.uid!,
+                      );
+                    }
+                    _navigationService.push(MaterialPageRoute(
+                      builder: (context){
+                        return ChatPage(chatUser: user);
+                      }
+                    ),);
+                  }),
               );
             }
           );

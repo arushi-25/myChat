@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mychat/pages/home_page.dart';
 import 'package:mychat/pages/login_page.dart';
@@ -28,7 +29,10 @@ class NavigationService {
   void pushNamed(String routeName){
     _navigatorKey.currentState?.pushNamed(routeName);
   }
-   void pushReplacementNamed(String routeName){
+  void push(MaterialPageRoute route){
+    _navigatorKey.currentState?.push(route);
+  }
+  void pushReplacementNamed(String routeName){
     _navigatorKey.currentState?.pushReplacementNamed(routeName);
   }
 
